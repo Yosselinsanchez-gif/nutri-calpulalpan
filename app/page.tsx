@@ -31,7 +31,7 @@ export default function Home() {
 
             <div>
               <h1 className="text-xl md:text-2xl font-bold">
-                María Fernanda López
+                
               </h1>
 
               <p className="text-xs text-emerald-400 flex items-center gap-1">
@@ -72,11 +72,11 @@ export default function Home() {
                 </h4>
 
                 <p className="text-sm text-gray-500 italic">
-                  Dra. María González
+                  
                 </p>
 
                 <p className="text-[11px] text-gray-400 mt-1">
-                  15 de Noviembre, 2026
+                  
                 </p>
               </div>
 
