@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { User, Bell, Download, ChevronRight, Clock, ChevronLeft } from "lucide-react";
 
 const CONSEJOS = [
@@ -22,15 +23,12 @@ const CONSEJOS = [
 ];
 
 export default function Home() {
-
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Carrusel automático
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide(prev =>
-        prev === CONSEJOS.length - 1 ? 0 : prev + 1
-      );
+      setCurrentSlide((prev) => (prev + 1) % CONSEJOS.length);
     }, 4000);
 
     return () => clearInterval(interval);
@@ -42,7 +40,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100 font-sans pb-10">
-
       <style jsx global>{`
         @media print {
           .no-print { display: none !important; }
@@ -86,15 +83,14 @@ export default function Home() {
         <section className="no-print bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
           <div className="bg-[#631936] p-4 text-white font-semibold flex justify-between items-center">
-
             <span>Consejos de Salud</span>
 
             <div className="flex gap-2">
 
               <button
                 onClick={() =>
-                  setCurrentSlide(prev =>
-                    prev > 0 ? prev - 1 : CONSEJOS.length - 1
+                  setCurrentSlide((prev) =>
+                    prev === 0 ? CONSEJOS.length - 1 : prev - 1
                   )
                 }
                 className="p-1 bg-white/10 rounded-full"
@@ -104,8 +100,8 @@ export default function Home() {
 
               <button
                 onClick={() =>
-                  setCurrentSlide(prev =>
-                    prev < CONSEJOS.length - 1 ? prev + 1 : 0
+                  setCurrentSlide((prev) =>
+                    (prev + 1) % CONSEJOS.length
                   )
                 }
                 className="p-1 bg-white/10 rounded-full"
@@ -114,7 +110,6 @@ export default function Home() {
               </button>
 
             </div>
-
           </div>
 
           <div className="p-6">
@@ -126,17 +121,18 @@ export default function Home() {
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
 
-                {CONSEJOS.map((consejo, idx) => (
+                {CONSEJOS.map((consejo) => (
 
                   <div
-                    key={idx}
+                    key={consejo.titulo}
                     className="min-w-full relative h-48 rounded-xl overflow-hidden"
                   >
 
-                    <img
+                    <Image
                       src={consejo.img}
-                      className="absolute inset-0 w-full h-full object-cover"
                       alt={consejo.titulo}
+                      fill
+                      className="object-cover"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 p-4 flex flex-col justify-end">
