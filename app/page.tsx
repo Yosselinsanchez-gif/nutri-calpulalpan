@@ -8,7 +8,7 @@ import { User, Bell, Download, ChevronRight } from "lucide-react";
 export default function Home() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [fecha, setFecha] = useState(new Date());
+  const [fecha, setFecha] = useState<Date | null>(new Date());
   const [hora, setHora] = useState("");
   const [nombre, setNombre] = useState("");
   const [consulta, setConsulta] = useState("");
@@ -18,13 +18,13 @@ export default function Home() {
     window.print();
   };
 
-  const guardarCita = (e:any) => {
+  const guardarCita = (e: React.FormEvent) => {
     e.preventDefault();
 
     const nuevaCita = {
       nombre,
       consulta,
-      fecha: fecha.toLocaleDateString(),
+      fecha: fecha?.toLocaleDateString(),
       hora
     };
 
@@ -55,11 +55,9 @@ export default function Home() {
               <User size={32} />
             </div>
 
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold">
-                María Fernanda López
-              </h1>
-            </div>
+            <h1 className="text-xl md:text-2xl font-bold">
+              María Fernanda López
+            </h1>
           </div>
 
           <button className="no-print bg-[#b38e44] hover:bg-[#967738] text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
@@ -79,9 +77,8 @@ export default function Home() {
           Solicitar Nueva Consulta <ChevronRight size={24} />
         </button>
 
-        {/* FORMULARIO DE CONSULTA */}
+        {/* FORMULARIO */}
         {mostrarFormulario && (
-
           <section className="bg-white p-6 rounded-2xl shadow border border-gray-200">
 
             <h2 className="text-xl font-bold mb-4 text-[#631936]">
@@ -120,7 +117,7 @@ export default function Home() {
               <div>
                 <label className="text-sm font-semibold">Fecha</label>
                 <Calendar
-                  onChange={setFecha}
+                  onChange={(value)=>setFecha(value as Date)}
                   value={fecha}
                 />
               </div>
@@ -160,7 +157,7 @@ export default function Home() {
           </section>
         )}
 
-        {/* CITAS AGENDADAS */}
+        {/* CITAS */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
           <div className="bg-[#631936] p-4 text-white font-semibold">
@@ -179,9 +176,7 @@ export default function Home() {
 
               <div key={index} className="border p-4 rounded-lg">
 
-                <p className="font-semibold">
-                  {cita.nombre}
-                </p>
+                <p className="font-semibold">{cita.nombre}</p>
 
                 <p className="text-sm text-gray-600">
                   {cita.consulta}
@@ -199,7 +194,7 @@ export default function Home() {
 
         </section>
 
-        {/* SECCIÓN DIAGNÓSTICOS ORIGINAL */}
+        {/* DIAGNÓSTICOS */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
           <div className="bg-[#631936] p-4 text-white font-semibold">
