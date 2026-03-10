@@ -32,11 +32,6 @@ export default function Home() {
               <h1 className="text-xl md:text-2xl font-bold">
                 {/* Nombre del usuario */}
               </h1>
-
-              <p className="text-xs text-emerald-400 flex items-center gap-1">
-                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                {/* Estado de sesión */}
-              </p>
             </div>
           </div>
 
