@@ -2,17 +2,25 @@
 
 import { useState } from "react";
 import Calendar from "react-calendar";
+import { Value } from "react-calendar/dist/cjs/shared/types";
 import "react-calendar/dist/Calendar.css";
 import { User, Bell, Download, ChevronRight } from "lucide-react";
+
+type Cita = {
+  nombre: string;
+  consulta: string;
+  fecha: string;
+  hora: string;
+};
 
 export default function Home() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [fecha, setFecha] = useState<Date | null>(new Date());
+  const [fecha, setFecha] = useState<Value>(new Date());
   const [hora, setHora] = useState("");
   const [nombre, setNombre] = useState("");
   const [consulta, setConsulta] = useState("");
-  const [citas, setCitas] = useState<any[]>([]);
+  const [citas, setCitas] = useState<Cita[]>([]);
 
   const handleDownload = () => {
     window.print();
@@ -21,14 +29,16 @@ export default function Home() {
   const guardarCita = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const nuevaCita = {
+    if (!fecha || Array.isArray(fecha)) return;
+
+    const nuevaCita: Cita = {
       nombre,
       consulta,
-      fecha: fecha?.toLocaleDateString(),
+      fecha: fecha.toLocaleDateString(),
       hora
     };
 
-    setCitas([...citas, nuevaCita]);
+    setCitas((prev) => [...prev, nuevaCita]);
 
     setMostrarFormulario(false);
     setNombre("");
@@ -42,7 +52,7 @@ export default function Home() {
       <style jsx global>{`
         @media print {
           .no-print { display: none !important; }
-          body { background-color: white !important; }
+          body { background: white !important; }
         }
       `}</style>
 
@@ -51,8 +61,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           
           <div className="flex items-center gap-4">
-            <div className="bg-gray-400 p-3 rounded-full text-white">
-              <User size={32} />
+            <div className="bg-gray-400 p-3 rounded-full">
+              <User size={32}/>
             </div>
 
             <h1 className="text-xl md:text-2xl font-bold">
@@ -60,26 +70,27 @@ export default function Home() {
             </h1>
           </div>
 
-          <button className="no-print bg-[#b38e44] hover:bg-[#967738] text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
-            <Bell size={16} /> Actualizar Datos
+          <button className="no-print bg-[#b38e44] px-4 py-2 rounded-lg flex gap-2 items-center">
+            <Bell size={16}/> Actualizar Datos
           </button>
 
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
 
-        {/* BOTÓN NUEVA CONSULTA */}
+        {/* BOTÓN */}
         <button
           onClick={() => setMostrarFormulario(true)}
-          className="no-print w-full bg-[#b38e44] hover:bg-[#967738] text-white p-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 shadow-lg"
+          className="no-print w-full bg-[#b38e44] text-white p-5 rounded-xl font-bold text-xl flex justify-center items-center gap-3"
         >
-          Solicitar Nueva Consulta <ChevronRight size={24} />
+          Solicitar Nueva Consulta <ChevronRight size={24}/>
         </button>
 
         {/* FORMULARIO */}
         {mostrarFormulario && (
-          <section className="bg-white p-6 rounded-2xl shadow border border-gray-200">
+
+          <section className="bg-white p-6 rounded-2xl shadow">
 
             <h2 className="text-xl font-bold mb-4 text-[#631936]">
               Agendar Consulta
@@ -93,8 +104,8 @@ export default function Home() {
                   type="text"
                   value={nombre}
                   onChange={(e)=>setNombre(e.target.value)}
-                  required
                   className="w-full border p-2 rounded-lg"
+                  required
                 />
               </div>
 
@@ -103,8 +114,8 @@ export default function Home() {
                 <select
                   value={consulta}
                   onChange={(e)=>setConsulta(e.target.value)}
-                  required
                   className="w-full border p-2 rounded-lg"
+                  required
                 >
                   <option value="">Selecciona</option>
                   <option>Consulta General</option>
@@ -117,7 +128,7 @@ export default function Home() {
               <div>
                 <label className="text-sm font-semibold">Fecha</label>
                 <Calendar
-                  onChange={(value)=>setFecha(value as Date)}
+                  onChange={(value)=>setFecha(value)}
                   value={fecha}
                 />
               </div>
@@ -128,8 +139,8 @@ export default function Home() {
                   type="time"
                   value={hora}
                   onChange={(e)=>setHora(e.target.value)}
-                  required
                   className="w-full border p-2 rounded-lg"
+                  required
                 />
               </div>
 
@@ -158,7 +169,7 @@ export default function Home() {
         )}
 
         {/* CITAS */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <section className="bg-white rounded-2xl shadow border">
 
           <div className="bg-[#631936] p-4 text-white font-semibold">
             Citas Agendadas
@@ -172,8 +183,7 @@ export default function Home() {
               </p>
             )}
 
-            {citas.map((cita, index) => (
-
+            {citas.map((cita,index)=>(
               <div key={index} className="border p-4 rounded-lg">
 
                 <p className="font-semibold">{cita.nombre}</p>
@@ -187,7 +197,6 @@ export default function Home() {
                 </p>
 
               </div>
-
             ))}
 
           </div>
@@ -195,35 +204,35 @@ export default function Home() {
         </section>
 
         {/* DIAGNÓSTICOS */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <section className="bg-white rounded-2xl shadow border">
 
           <div className="bg-[#631936] p-4 text-white font-semibold">
             Mis Diagnósticos
           </div>
 
-          <div className="p-6 divide-y divide-gray-100">
+          <div className="p-6">
 
-            <div className="flex justify-between items-center py-5">
+            <div className="flex justify-between items-center">
 
               <div>
-                <h4 className="font-bold text-gray-800">
+                <h4 className="font-bold">
                   Evaluación Nutricional Completa
                 </h4>
 
-                <p className="text-sm text-gray-500 italic">
+                <p className="text-sm text-gray-500">
                   Dra. María González
                 </p>
 
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-xs text-gray-400">
                   15 de Noviembre, 2026
                 </p>
               </div>
 
               <button
                 onClick={handleDownload}
-                className="no-print bg-[#b38e44] text-white px-4 py-2 rounded-lg flex items-center gap-2 text-xs font-bold"
+                className="no-print bg-[#b38e44] text-white px-4 py-2 rounded-lg flex gap-2"
               >
-                <Download size={16} /> Descargar PDF
+                <Download size={16}/> Descargar PDF
               </button>
 
             </div>
