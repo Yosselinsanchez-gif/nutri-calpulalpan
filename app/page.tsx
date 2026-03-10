@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Bell, Download, ChevronRight, Clock, ChevronLeft } from "lucide-react";
 
 const CONSEJOS = [
@@ -24,6 +24,17 @@ const CONSEJOS = [
 export default function Home() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Carrusel automático
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide(prev =>
+        prev === CONSEJOS.length - 1 ? 0 : prev + 1
+      );
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleDownload = () => {
     window.print();
@@ -111,7 +122,7 @@ export default function Home() {
             <div className="relative overflow-hidden">
 
               <div
-                className="flex transition-transform duration-500"
+                className="flex transition-transform duration-700 ease-in-out"
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
 
@@ -149,7 +160,6 @@ export default function Home() {
             </div>
 
             {/* INDICADORES */}
-
             <div className="flex justify-between items-center mt-6">
 
               <button className="flex items-center gap-2 text-[#631936] font-semibold text-sm">
