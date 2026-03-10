@@ -1,49 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import Calendar from "react-calendar";
-import { Value } from "react-calendar/dist/cjs/shared/types";
-import "react-calendar/dist/Calendar.css";
-import { User, Bell, Download, ChevronRight } from "lucide-react";
+import { User, Bell, Download, ChevronRight, Clock, ChevronLeft } from "lucide-react";
 
-type Cita = {
-  nombre: string;
-  consulta: string;
-  fecha: string;
-  hora: string;
-};
+const CONSEJOS = [
+  {
+    titulo: "Hidratación Constante",
+    desc: "Bebe al menos 2 litros para mantener tu cuerpo hidratado.",
+    img: "https://images.unsplash.com/photo-1548191265-cc70d3d45ba1?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    titulo: "Nutrición Equilibrada",
+    desc: "Incluye frutas y verduras en todas tus comidas.",
+    img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    titulo: "Actividad Física",
+    desc: "Al menos 30 min de ejercicio diario fortalecen tu corazón.",
+    img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400"
+  }
+];
 
 export default function Home() {
 
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [fecha, setFecha] = useState<Value>(new Date());
-  const [hora, setHora] = useState("");
-  const [nombre, setNombre] = useState("");
-  const [consulta, setConsulta] = useState("");
-  const [citas, setCitas] = useState<Cita[]>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleDownload = () => {
     window.print();
-  };
-
-  const guardarCita = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!fecha || Array.isArray(fecha)) return;
-
-    const nuevaCita: Cita = {
-      nombre,
-      consulta,
-      fecha: fecha.toLocaleDateString(),
-      hora
-    };
-
-    setCitas((prev) => [...prev, nuevaCita]);
-
-    setMostrarFormulario(false);
-    setNombre("");
-    setConsulta("");
-    setHora("");
   };
 
   return (
@@ -52,159 +35,162 @@ export default function Home() {
       <style jsx global>{`
         @media print {
           .no-print { display: none !important; }
-          body { background: white !important; }
+          body { background-color: white !important; }
         }
       `}</style>
 
       {/* HEADER */}
       <header className="bg-[#631936] text-white p-6 shadow-lg">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          
+
           <div className="flex items-center gap-4">
-            <div className="bg-gray-400 p-3 rounded-full">
-              <User size={32}/>
+
+            <div className="bg-gray-400 p-3 rounded-full text-white">
+              <User size={32} />
             </div>
 
-            <h1 className="text-xl md:text-2xl font-bold">
-              María Fernanda López
-            </h1>
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold">
+                María Fernanda López
+              </h1>
+
+              <p className="text-xs text-emerald-400 flex items-center gap-1">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                Google Signed-in
+              </p>
+            </div>
+
           </div>
 
-          <button className="no-print bg-[#b38e44] px-4 py-2 rounded-lg flex gap-2 items-center">
-            <Bell size={16}/> Actualizar Datos
+          <button className="no-print bg-[#b38e44] hover:bg-[#967738] text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+            <Bell size={16} /> Actualizar Datos
           </button>
 
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
-        {/* BOTÓN */}
-        <button
-          onClick={() => setMostrarFormulario(true)}
-          className="no-print w-full bg-[#b38e44] text-white p-5 rounded-xl font-bold text-xl flex justify-center items-center gap-3"
-        >
-          Solicitar Nueva Consulta <ChevronRight size={24}/>
-        </button>
+        {/* CARRUSEL */}
+        <section className="no-print bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
-        {/* FORMULARIO */}
-        {mostrarFormulario && (
+          <div className="bg-[#631936] p-4 text-white font-semibold flex justify-between items-center">
 
-          <section className="bg-white p-6 rounded-2xl shadow">
+            <span>Consejos de Salud</span>
 
-            <h2 className="text-xl font-bold mb-4 text-[#631936]">
-              Agendar Consulta
-            </h2>
+            <div className="flex gap-2">
 
-            <form onSubmit={guardarCita} className="space-y-4">
+              <button
+                onClick={() =>
+                  setCurrentSlide(prev =>
+                    prev > 0 ? prev - 1 : CONSEJOS.length - 1
+                  )
+                }
+                className="p-1 bg-white/10 rounded-full"
+              >
+                <ChevronLeft size={16} />
+              </button>
 
-              <div>
-                <label className="text-sm font-semibold">Nombre</label>
-                <input
-                  type="text"
-                  value={nombre}
-                  onChange={(e)=>setNombre(e.target.value)}
-                  className="w-full border p-2 rounded-lg"
-                  required
-                />
-              </div>
+              <button
+                onClick={() =>
+                  setCurrentSlide(prev =>
+                    prev < CONSEJOS.length - 1 ? prev + 1 : 0
+                  )
+                }
+                className="p-1 bg-white/10 rounded-full"
+              >
+                <ChevronRight size={16} />
+              </button>
 
-              <div>
-                <label className="text-sm font-semibold">Tipo de Consulta</label>
-                <select
-                  value={consulta}
-                  onChange={(e)=>setConsulta(e.target.value)}
-                  className="w-full border p-2 rounded-lg"
-                  required
-                >
-                  <option value="">Selecciona</option>
-                  <option>Consulta General</option>
-                  <option>Nutrición</option>
-                  <option>Psicología</option>
-                  <option>Seguimiento Médico</option>
-                </select>
-              </div>
+            </div>
 
-              <div>
-                <label className="text-sm font-semibold">Fecha</label>
-                <Calendar
-                  onChange={(value)=>setFecha(value)}
-                  value={fecha}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold">Hora</label>
-                <input
-                  type="time"
-                  value={hora}
-                  onChange={(e)=>setHora(e.target.value)}
-                  className="w-full border p-2 rounded-lg"
-                  required
-                />
-              </div>
-
-              <div className="flex gap-3">
-
-                <button
-                  type="button"
-                  onClick={()=>setMostrarFormulario(false)}
-                  className="bg-gray-300 px-4 py-2 rounded-lg"
-                >
-                  Cancelar
-                </button>
-
-                <button
-                  type="submit"
-                  className="bg-[#631936] text-white px-4 py-2 rounded-lg"
-                >
-                  Agendar
-                </button>
-
-              </div>
-
-            </form>
-
-          </section>
-        )}
-
-        {/* CITAS */}
-        <section className="bg-white rounded-2xl shadow border">
-
-          <div className="bg-[#631936] p-4 text-white font-semibold">
-            Citas Agendadas
           </div>
 
-          <div className="p-6 space-y-4">
+          <div className="p-6">
 
-            {citas.length === 0 && (
-              <p className="text-gray-500">
-                No hay citas registradas
-              </p>
-            )}
+            <div className="relative overflow-hidden">
 
-            {citas.map((cita,index)=>(
-              <div key={index} className="border p-4 rounded-lg">
+              <div
+                className="flex transition-transform duration-500"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
 
-                <p className="font-semibold">{cita.nombre}</p>
+                {CONSEJOS.map((consejo, idx) => (
 
-                <p className="text-sm text-gray-600">
-                  {cita.consulta}
-                </p>
+                  <div
+                    key={idx}
+                    className="min-w-full relative h-48 rounded-xl overflow-hidden"
+                  >
 
-                <p className="text-xs text-gray-500">
-                  {cita.fecha} - {cita.hora}
-                </p>
+                    <img
+                      src={consejo.img}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      alt={consejo.titulo}
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 p-4 flex flex-col justify-end">
+
+                      <h3 className="text-white font-bold text-lg">
+                        {consejo.titulo}
+                      </h3>
+
+                      <p className="text-white/80 text-xs">
+                        {consejo.desc}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                ))}
 
               </div>
-            ))}
+
+            </div>
+
+            {/* INDICADORES */}
+
+            <div className="flex justify-between items-center mt-6">
+
+              <button className="flex items-center gap-2 text-[#631936] font-semibold text-sm">
+                <Clock size={18} /> Solicitar Cambio
+              </button>
+
+              <div className="flex gap-2">
+
+                {CONSEJOS.map((_, i) => (
+
+                  <button
+                    key={i}
+                    onClick={() => setCurrentSlide(i)}
+                    className={`h-2 rounded-full transition-all ${
+                      currentSlide === i
+                        ? "w-6 bg-[#631936]"
+                        : "w-2 bg-gray-300"
+                    }`}
+                  />
+
+                ))}
+
+              </div>
+
+              <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold">
+                APROBACIÓN PENDIENTE
+              </span>
+
+            </div>
 
           </div>
 
         </section>
 
+        {/* BOTÓN */}
+        <button className="no-print w-full bg-[#b38e44] hover:bg-[#967738] text-white p-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 shadow-lg">
+          Solicitar Nueva Consulta <ChevronRight size={24} />
+        </button>
+
         {/* DIAGNÓSTICOS */}
-        <section className="bg-white rounded-2xl shadow border">
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
           <div className="bg-[#631936] p-4 text-white font-semibold">
             Mis Diagnósticos
@@ -215,24 +201,26 @@ export default function Home() {
             <div className="flex justify-between items-center">
 
               <div>
-                <h4 className="font-bold">
+
+                <h4 className="font-bold text-gray-800">
                   Evaluación Nutricional Completa
                 </h4>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 italic">
                   Dra. María González
                 </p>
 
                 <p className="text-xs text-gray-400">
                   15 de Noviembre, 2026
                 </p>
+
               </div>
 
               <button
                 onClick={handleDownload}
-                className="no-print bg-[#b38e44] text-white px-4 py-2 rounded-lg flex gap-2"
+                className="no-print bg-[#b38e44] text-white px-4 py-2 rounded-lg flex items-center gap-2 text-xs font-bold"
               >
-                <Download size={16}/> Descargar PDF
+                <Download size={16} /> Descargar PDF
               </button>
 
             </div>
